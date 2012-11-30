@@ -7,7 +7,7 @@
             "transforms a symbol of form UIAXyzAsdFx to keyword :xyzAsdFx"
             (let [s (drop 3 (str s))
                   [fst & others] s]
-              (keyword (apply str (cons (st/lower-case fst) others)))))
+              (keyword (apply str (st/lower-case fst) others))))
         pairs (map (fn [sym]
                      [(keywordize sym)
                       `(~'js* ~(str "((typeof " (name sym) " != 'undefined') && " (name sym) ")"))])
@@ -23,20 +23,18 @@
         (when more
           (list* `assert-args fnname more)))))
 
-(defmacro query-let
-  "bindings => binding-form test
+(defmacro if-exists-let
+  "binding => binding-form query
 
-  If test is true, evaluates then with binding-form bound to the value of
-  test, if not, yields else"
+  If query results in a non empty result, evaluates then with binding-form bound to the value of the query, if not, yields else"
   {:added "1.0"}
   ([bindings then]
-     `(query-let ~bindings ~then nil))
+     `(if-exists-let ~bindings ~then nil))
   ([bindings then else & oldform]
      (assert-args
       (and (vector? bindings) (nil? oldform)) "a vector for its binding"
       (= 2 (count bindings)) "exactly 2 forms in binding vector")
      (let [form (bindings 0) query (bindings 1)]
-       `(if-let [res# (seq (calabash-script.core/query-el ~query))]
-          (let [~form res#]
-            ~then)
+       `(if-let [~form (seq (calabash-script.core/query-el ~query))]
+          ~then
           ~else))))
