@@ -26,7 +26,7 @@
   (let [cnt @*screenshot-count*]
     (when cnt
       (swap! *screenshot-count* inc))
-    (.captureScreenWithName (utils/target) (str name (or cnt "")))))
+    (.captureScreenWithName (target) (str name (or cnt "")))))
 
 (def ^:dynamic *localizations*
   {:keyboard {:return {:en "return" :da "retur"}}})
@@ -35,11 +35,19 @@
   "Returns a localized version of the message (string or keyword)"
   [domain msg]
   (let [lang (keyword (or (first (.preferencesValueForKey
-                                 (utils/app)
+                                 (app)
                                  "AppleLanguages"))
                          "en"))
         ]
     (get-in *localizations* [domain msg lang])))
+
+
+(defn normalize
+  "Normalize a UIAElement by converting UIAElementNil to nil"
+  [uia-el]
+  (if (instance? js/UIAElementNil uia-el)
+    nil
+    uia-el))
 
 ;;https://github.com/ibdknox/jayq/blob/master/src/jayq/util.cljs
 (defn clj->js

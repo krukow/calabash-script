@@ -2,7 +2,6 @@
   (:require [calabash-script.log :as log]
             [calabash-script.utils :as utils]))
 
-
 (defn fail
   [reason & kwargs]
   (let [{:keys [screenshot]

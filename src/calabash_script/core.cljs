@@ -1,6 +1,6 @@
 (ns calabash-script.core
   (:use [calabash-script.query :only [-query dir-seq valid?]]
-        [calabash-script.tests :only [define-uia-test run-all!]])
+        [calabash-script.tests :only [define-uia-test run-all! fail fail-if-not]])
 
   (:require [calabash-script.log :as log]
             [calabash-script.uia :as uia]
@@ -26,20 +26,11 @@
 
 ;;;;;;; Waiting ;;;;;;;;;
 
-
 (defn sleep
-  "Waits for n seconds"
-  [n]
-  (.delay (utils/target) n))
+  "Waits for x seconds"
+  [x]
+  (.delay (utils/target) x))
 
-
-(defn do-until
-  [pred action]
-  (loop []
-    (let [res (action)]
-      (if (pred res)
-        res
-        (recur)))))
 
 (defn duration-exceeds?
   [start max]
@@ -69,11 +60,11 @@
         results (filter
                    (fn [res]
                      (when (duration-exceeds? start timeout)
-                       (tests/fail message (and screenshot "timeout")))
+                       (fail message (and screenshot "timeout")))
                      res)
                    actions)
         result (first results)]
-    (when (> 0 post-timeout)
+    (when (> post-timeout 0)
       (sleep post-timeout))
     result))
 
@@ -99,29 +90,92 @@
 
 
 
+;;;; Helpers ;;;;
+
+(defn perform-on
+  [action & args]
+  (if-let [res (seq (apply query-el args))]
+    (action res)
+    (fail (apply str "No results for query " args))))
+
+(defn perform-on-first
+  [action & args]
+  (apply perform-on (fn [els] (action (first els))) args))
+
+
+;;;; Gestures ;;;;
+
 (defn tap
   "Taps the object which results from running query given by args. Fails if this query gives no results."
   [& args]
-  (if-let [res (seq (apply query-el args))]
-    (.tap (first res))
-    (fail (apply str "No results for query " args))))
+  (apply perform-on-first #(.tap %) args))
+
+(defn double-tap
+  [& args]
+  (apply perform-on-first #(.doubleTap %) args))
+
+(defn two-finger-tap
+  [& args]
+  (apply perform-on-first #(.twoFingerTap %) args))
 
 (defn pan
-  [src-query tgt-query]
-  (let [src (first (query src-query))
-        tgt (first (query tgt-query))]
+  "Pan from result of one query to that of another"
+  [src-query tgt-query & kwargs]
+  (let [{:keys [duration]
+         :or   {duration 1}} kwargs
+        src (seq (query src-query))
+        tgt (seq (query tgt-query))]
+    (fail-if-not (and src tgt)
+                 (apply str "Unable to find results for both of " src-query tgt-query))
     (.dragFromToForDuration (utils/target)
                             (utils/clj->js (:hit-point src))
                             (utils/clj->js (:hit-point tgt))
-                            3)))
+                            duration)))
+
+(defn scroll-to
+  "Scroll to make an element visible"
+  [& args]
+  (apply perform-on-first #(.scrollToVisible %) args))
+
+(defn touch-hold
+  [duration & args]
+  (apply perform-on-first #(.touchAndHold % duration) args))
 
 
+;;; Alerts ;;;
+
+(def ^:dynamic *alert-handlers*
+  (atom (list (constantly true)))) ;;default is do nothing
+
+(defn set-alert-handler!
+  [handler]
+  (aset (utils/target) "onAlert" handler))
+
+(defn add-alert-handler!
+  [handler]
+  (swap! *alert-handlers* #(cons handler %)))
+
+(set-alert-handler!
+ (fn [alert]
+   (let [handler-values (map (fn [h] (h alert)) @*alert-handlers*)]
+     (first (filter true? handler-values)))))
+
+(defn alert
+  []
+  (utils/normalize (.alert (utils/app))))
+
+(defn alert-texts
+  [])
+
+
+
+;;; Keyboard ;;;
 (defn keyboard-visible?
   []
   (valid? (utils/keyboard)))
 
 (defn keyboard-enter-text
-  "Enters a string of characters using the iOS keyboard. Fails if no keyboard is visible. iOS5 only for now (need implementation that doesn't use typeString)."
+  "Enters a string of characters using the iOS keyboard. Fails if no keyboard is visible. iOS5+ only for now (need implementation that doesn't use typeString)."
   [txt]
   (fail-if-not (keyboard-visible?) "Keyboard not visible")
   (.typeString (utils/keyboard) txt))
@@ -133,9 +187,8 @@
   (.typeString (utils/keyboard) "\n"))
 
 
-(defn screenshot
-  [name]
-  (.captureScreenWithName (utils/target) name))
+
+;;
 
 
 (comment
@@ -145,15 +198,14 @@
       (tap [:textField {:marked "Name"}])
       (keyboard-enter-text "Karl.Krukow@gmail.com")
       (enter)
-      (screenshot "Menu")
+      (utils/screenshot "Menu")
       (tap [:button {:marked "Second"}])
       (sleep 0.3)
-      (screenshot "Map"))))
+      (utils/screenshot "Map"))))
 
 
 
-
-(comment
+;;(comment
   (define-uia-test
     "I can reorder cells"
     (fn []
@@ -163,14 +215,32 @@
 
       (pan [:tableCell {:marked "Cell 0"} :button]
            [:tableCell {:marked "Cell 2"} :button])
-      )))
-
-
-  (define-uia-test
-    "web"
-    (fn []
-      (log-query [:view])
-      (sleep 3)
       ))
+;)
+
+
+
+(comment
+  (define-uia-test
+    "wait"
+    (fn []
+      (let [cnt (atom 0)]
+        (tap [:view {:marked "Third"}])
+        (wait-for {:retry-frequency 0.5 :timeout 10 :post-timeout 10
+                   }
+                  (fn []
+                    (log/log "Call..")
+                    (if (= @cnt 10)
+                      true
+                      (do
+                        (swap! cnt inc)
+                        false))))))))
+
+
+(comment
+  (define-uia-test
+    "alert"
+    (fn []
+      (log/log (alert)))))
 
 (run-all!)
