@@ -8,6 +8,7 @@
             [calabash-script.utils :as utils])
   (:require-macros [calabash-script.macros.uia :as m]))
 
+
 (.setTimeout (utils/target) 0)
 
 (set! *print-fn*
@@ -87,6 +88,7 @@
 (defn log-query [& args]
   "Log the result of a query."
   (log/log (apply query args)))
+
 
 
 
@@ -186,10 +188,31 @@
   (fail-if-not (keyboard-visible?) "Keyboard not visible")
   (.typeString (utils/keyboard) "\n"))
 
-
-
 ;;
 
+;; Helpers
+
+(defn tap-mark
+  [mark]
+  (tap [:view {:marked mark}]))
+
+(defn element-exists?
+  [& args]
+  (boolean (seq (apply query args))))
+
+(defn element-does-not-exist?
+  [& args]
+  (not (apply element-exists? args)))
+
+(defn check-element-exists
+  [& args]
+  (when-not (apply element-exists? args)
+    (fail "Element does not exist: " (apply str args))))
+
+(defn check-element-exists
+  [& args]
+  (when (apply element-exists? args)
+    (fail "Element does exist: " (apply str args))))
 
 (comment
   (define-uia-test
@@ -205,7 +228,7 @@
 
 
 
-;;(comment
+(comment
   (define-uia-test
     "I can reorder cells"
     (fn []
@@ -216,8 +239,19 @@
       (pan [:tableCell {:marked "Cell 0"} :button]
            [:tableCell {:marked "Cell 2"} :button])
       ))
-;)
+)
 
+(comment
+
+  (define-uia-test
+    "web scroll"
+    (fn []
+      (tap [:view {:marked "Fourth"}])
+      (scroll-to [:link])
+      (utils/screenshot "link")
+      (tap [:link])
+      (utils/screenshot "link")
+      )))
 
 
 (comment
@@ -243,4 +277,4 @@
     (fn []
       (log/log (alert)))))
 
-(run-all!)
+;(run-all!)
