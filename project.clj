@@ -1,4 +1,4 @@
-(defproject calabash-script "0.0.3"
+(defproject calabash-script "0.0.4"
   :description "FIXME: write description"
   :url "http://example.com/FIXME"
   :license {:name "Eclipse Public License"
@@ -15,4 +15,9 @@
                 :jar true
                 :compiler {:output-to "build/calabash_script.js"
                            :optimizations :whitespace
+                           :pretty-print true}}
+               {:source-path "base"
+                :jar true
+                :compiler {:output-to "build/base.js"
+                           :optimizations :simple
                            :pretty-print true}}]})
