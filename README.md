@@ -87,10 +87,10 @@ user=> ;;this may take some time
     
 ## REPL Usage
 
-CalabashScript comes with a REPL. This is provided by a separate project [uia-repl](https://github.com/krukow/uia-repl), which is the reason for the extra dependency `[calabash/uia-repl "0.0.8"]`. This is based (but not quite as elegant) on Bodil Stokke's [cljs-noderepl](https://github.com/bodil/cljs-noderepl) to many thanks to her!
+CalabashScript comes with a REPL. This is provided by a separate project [uia-repl](https://github.com/krukow/uia-repl), which is the reason for the extra dependency `[calabash/uia-repl "0.0.8"]`. This is based (but not quite as elegant) on [Bodil Stokke](https://github.com/bodil)'s [cljs-noderepl](https://github.com/bodil/cljs-noderepl) to many thanks to her!
 
 To try the REPL (warning this is quite slow for various reasons): in your project you can run:
-
+```clojure
 	lein repl
 	user=> (require '[cljs.repl.uia :as uia])
 	nil
@@ -117,6 +117,7 @@ To try the REPL (warning this is quite slow for various reasons): in your projec
 	("archery" "athletics" "badminton" "basketball" "beach volleyball" "boxing" "canoe slalom" "canoe sprint" "cycling bmx" "cycling mountain bike" "cycling road" "cycling track" "diving" "equestrian dressage" "equestrian eventing" "equestrian jumping" "fencing" "football" "gymnastics artistic" "gymnastics rhythmic" "gymnastics trampoline" "handball" "hockey" "judo" "modern pentathlon" "rowing" "sailing" "shooting" "swimming" "synchronised swimming" "table tennis" "taekwondo" "tennis" "triathlon" "volleyball" "water polo" "weightlifting" "wrestling" "Home" "Events" "Count Down" "Schedule" "Anthem")
 
 	ClojureScript:example>   #_=> (c/tap-mark "water polo")
+```
 	
 ## Caveats
 CalabashScript is very young, and the REPL is quite experimental still… If you see
