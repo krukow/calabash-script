@@ -76,7 +76,10 @@ nil
 user=> (def app-path "/Users/krukow/github/2012-Olympics-iOS--iPad-and-iPhone--source-code/2012 Olympics/build/Applications/2012 Olympics.app")
  #'user/app-path
 
-user=> (run-test :app app-path :test "build/test_script.js")[instruments -t /Applications/Xcode.app/Contents/Applications/Instruments.app/Contents/PlugIns/AutomationInstrument.bundle/Contents/Resources/Automation.tracetemplate /Users/krukow/github/2012-Olympics-iOS--iPad-and-iPhone--source-code/2012 Olympics/build/Applications/2012 Olympics.app -D run/trace -e UIARESULTSPATH run -e UIASCRIPT build/test_script.js]
+user=> (run-test :app app-path :test "build/test_script.js")
+
+[instruments -t /Applications/Xcode.app/Contents/Applications/Instruments.app/Contents/PlugIns/AutomationInstrument.bundle/Contents/Resources/Automation.tracetemplate /Users/krukow/github/2012-Olympics-iOS--iPad-and-iPhone--source-code/2012 Olympics/build/Applications/2012 Olympics.app -D run/trace -e UIARESULTSPATH run -e UIASCRIPT build/test_script.js]
+
 {:input #<BufferedReader java.io.BufferedReader@7ecdc97b>, :process #<UNIXProcess java.lang.UNIXProcess@7866eb46>}
 user=> ;;this may take some time
 ```
