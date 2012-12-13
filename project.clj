@@ -1,4 +1,4 @@
-(defproject calabash-script "0.0.5"
+(defproject calabash-script "0.0.6"
   :description "FIXME: write description"
   :url "http://example.com/FIXME"
   :license {:name "Eclipse Public License"
@@ -10,7 +10,7 @@
 
   :plugins [[lein-cljsbuild "0.2.9"]]
   :source-paths ["src/calabash_script/macros"
-                 "src/calabash_script/clj"]
+                 "src"]
   :cljsbuild {:builds
               [{:source-path "src"
                 :jar true
