@@ -9,10 +9,9 @@
   :hooks [leiningen.cljsbuild]
 
   :plugins [[lein-cljsbuild "0.2.9"]]
-  :source-paths ["src/calabash_script/macros"
-                 "src"]
+  :source-paths ["src/clj"]
   :cljsbuild {:builds
-              [{:source-path "src"
+              [{:source-path "src/cljs"
                 :jar true
                 :compiler {:output-to "build/calabash_script.js"
                            :optimizations :whitespace

@@ -214,6 +214,11 @@
   (when (apply element-exists? args)
     (fail "Element does exist: " (apply str args))))
 
+(defn names
+  "Returns the :name of all elements matching query"
+  [& args]
+  (map :name (apply query args)))
+
 (comment
   (define-uia-test
     "user should be able to log in"
