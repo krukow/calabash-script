@@ -87,7 +87,7 @@ user=> ;;this may take some time
     
 ## REPL Usage
 
-CalabashScript comes with a REPL. This is provided by a separate project [uia-repl](https://github.com/krukow/uia-repl), which is the reason for the extra dependency `[calabash/uia-repl "0.0.8"]`. This is based (but not quite as elegant) on [Bodil Stokke](https://github.com/bodil)'s [cljs-noderepl](https://github.com/bodil/cljs-noderepl) to many thanks to her!
+CalabashScript comes with a REPL. This is provided by a separate project [uia-repl](https://github.com/krukow/uia-repl), which is the reason for the extra dependency `[calabash/uia-repl "0.0.8"]`. This is based on (but not quite as elegant as) [Bodil Stokke](https://github.com/bodil)'s [cljs-noderepl](https://github.com/bodil/cljs-noderepl) to many thanks to her!
 
 To try the REPL (warning this is quite slow for various reasons): in your project you can run:
 ```clojure
@@ -107,7 +107,7 @@ To try the REPL (warning this is quite slow for various reasons): in your projec
 	{:status :success :value "6"}
 	6
 	#_=> (ns example (:require [calabash-script.core :as c]))
-	… (takes some time!)
+	… ;(takes some time!)
 	("calabash-script.core")
 	Loading files for  (calabash-script.core)
 	…
