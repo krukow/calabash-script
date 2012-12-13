@@ -10,7 +10,7 @@
 
   :plugins [[lein-cljsbuild "0.2.9"]]
   :source-paths ["src/calabash_script/macros"
-                 "src/clj"]
+                 "src/calabash_script/clj"]
   :cljsbuild {:builds
               [{:source-path "src"
                 :jar true
