@@ -41,7 +41,7 @@ Write a test, e.g., for the [CalabashScript Example](https://github.com/krukow/c
         [calabash-script.tests :only  [define-uia-test fail run-all!]]))
 
 (define-uia-test
-  "Archery details should be accessible via Events"
+  "Water polo details should be accessible via Events"
   (fn []
     (tap-mark "Events")
     (utils/screenshot "Events")
