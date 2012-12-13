@@ -1,6 +1,8 @@
 # CalabashScript
 
-CalabashScript is a [ClojureScript](https://github.com/clojure/clojurescript) library for writing automated functional tests for native iOS Apps. CalabashScript provides friendly ClojureScript APIs based on the (perhaps not so friendly) UIAutomation APIs. 
+CalabashScript is a [ClojureScript](https://github.com/clojure/clojurescript) library for writing automated functional tests for native iOS Apps. 
+
+CalabashScript provides friendly ClojureScript APIs based on the (perhaps not so friendly) UIAutomation APIs. 
 
 CalabashScript also provides a query language to find visible UIViews inside the current screen -- contrast
 
@@ -13,6 +15,8 @@ with
 ```clojure
 (tap [:button {:marked 'Edit'}))
 ```
+
+The query language is based (as closely as possible) on that of the Ruby-based [Calabash iOS](https://github.com/calabash/calabash-ios). This gets some of the advantages of Calabash-iOS/Frank to UIAutomation.
 
 Finally CalabashScript comes with a REPL! UIAutomation provides a JavaScript execution environment, and the project uia-repl provides a Clojure implementation of a ClojureScript "UIA-connected" REPL for this environment.
     
