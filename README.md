@@ -136,7 +136,9 @@ then it has gone bad and you need to restart the REPL!
 
 ## Rationale
 
-Apple provides a technology called [UIAutomation](http://developer.apple.com/library/ios/#documentation/DeveloperTools/Reference/UIAutomationRef/_index.html) which uses JavaScript to write automated tests for iOS apps. Unfortunately UIAutomation has several problems: tests are written in JavaScript using an verbose, and rather strange API. There is no built-in support for defining test suites or grouping test cases. Test cases are starter by calling a "logger" with a special method. Error messages are horrible the the development experience is even worse since you have to restart the app and run the entire test suite every time you want to make a change to the test. We saw an example of the verbosity before, and here is another from the [official docs](https://developer.apple.com/library/mac/#documentation/developertools/Conceptual/InstrumentsUserGuide/UsingtheAutomationInstrument/UsingtheAutomationInstrument.html#//apple_ref/doc/uid/TP40004652-CH20-SW1)
+Apple provides a technology called [UIAutomation](http://developer.apple.com/library/ios/#documentation/DeveloperTools/Reference/UIAutomationRef/_index.html) which allows one to use JavaScript to write automated tests for iOS apps. Unfortunately UIAutomation has several problems: tests are written in JavaScript using a verbose and rather strange and limited API. There is no built-in support for defining test suites or grouping test cases. Test cases are started by calling a method on a special "logger object". Error messages are horrible, and the development experience is even worse since you have to restart the app and run the entire test suite every time you want to make a change to the test. 
+
+We saw an example of the verbosity before, and here is another from the [official docs](https://developer.apple.com/library/mac/#documentation/developertools/Conceptual/InstrumentsUserGuide/UsingtheAutomationInstrument/UsingtheAutomationInstrument.html#//apple_ref/doc/uid/TP40004652-CH20-SW1)
 
 ```javascript
 UIATarget.localTarget().frontMostApp().mainWindow().tableViews()[0].cells()[0].elements()["Chocolate Cake"];
@@ -146,8 +148,7 @@ The view hierarchy must be explicitly navigated which leads to brittle tests.
 
 Some of these problems are inherent to the UIAutomation technology while others can be solved to some degree.
 
-CalabashScript replaces JavaScript with ClojureScript, provides a REPL for interactive exploratory development, provides a query language to declaratively find views (avoiding explicit hierarchy traversal), and provides high-level functions for interacting with views based on this query language (tap, pan, swipe etc).
-
+CalabashScript tries to solve some of the problems by: replacing JavaScript with ClojureScript, providing a REPL for interactive exploratory development, providing a query language to declaratively find views (avoiding explicit hierarchy traversal), and providing high-level functions for interacting with views based on this query language (tap, pan, swipe etc).
 
 
 ## License
