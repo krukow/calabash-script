@@ -1,4 +1,4 @@
-(defproject calabash-script "0.0.8"
+(defproject calabash-script "0.0.9"
   :description "FIXME: write description"
   :url "http://example.com/FIXME"
   :license {:name "Eclipse Public License"

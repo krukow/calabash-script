@@ -125,8 +125,8 @@
   [src-query tgt-query & kwargs]
   (let [{:keys [duration]
          :or   {duration 1}} kwargs
-        src (seq (query src-query))
-        tgt (seq (query tgt-query))]
+         src (first (seq (query src-query)))
+         tgt (first (seq (query tgt-query)))]
     (fail-if-not (and src tgt)
                  (apply str "Unable to find results for both of " src-query tgt-query))
     (.dragFromToForDuration (utils/target)
@@ -209,7 +209,7 @@
   (when-not (apply element-exists? args)
     (fail "Element does not exist: " (apply str args))))
 
-(defn check-element-exists
+(defn check-element-does-not-exist
   [& args]
   (when (apply element-exists? args)
     (fail "Element does exist: " (apply str args))))
@@ -218,6 +218,9 @@
   "Returns the :name of all elements matching query"
   [& args]
   (map :name (apply query args)))
+
+(defn set-location [location]
+  (.setLocation (utils/target) (utils/clj->js location)))
 
 
 (comment
