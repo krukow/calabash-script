@@ -60,17 +60,16 @@
 (defn matches?
   [sel obj val]
   (cond
-   (keyword? sel)
-   (if (= :marked sel)
-     (or (= (.name obj) val)
-         (= (.label obj) val)
-         (and (.-value obj)
-              (= (.value obj) val)))
+   (or (keyword? sel) (string? sel))
+   (let [kw-sel (keyword sel)]
+     (if (= :marked kw-sel)
+       (or (= (.name obj) val)
+           (= (.label obj) val)
+           (and (.-value obj)
+                (= (.value obj) val)))
 
-     (let [res (.withValueForKey obj val (name sel))]
-       (valid? res)))
-
-
+       (let [res (.withValueForKey obj val (name kw-sel))]
+         (valid? res))))
    (vector? sel)
    (case (count sel)
      2  ;;simple predicate
