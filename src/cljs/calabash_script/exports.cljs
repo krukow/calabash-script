@@ -29,5 +29,6 @@
 (defn ^:export typeString [string] (core/keyboard-enter-text string))
 (defn ^:export enter [] (core/enter))
 (defn ^:export tapMark [mark] (core/tap-mark mark))
+(defn ^:export tapOffset [offset] (core/tap-offset (reader/read-string offset)))
 
 (defn ^:export setLocation [location] (core/set-location (reader/read-string location)))

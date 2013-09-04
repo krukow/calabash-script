@@ -196,6 +196,10 @@
   [mark]
   (tap [:view {:marked mark}]))
 
+(defn tap-offset
+  [offset]
+  (.tapWithOptions (utils/target) (utils/clj->js offset)))
+
 (defn element-exists?
   [& args]
   (boolean (seq (apply query args))))
