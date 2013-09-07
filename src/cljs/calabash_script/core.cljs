@@ -134,6 +134,16 @@
                             (utils/clj->js (:hit-point tgt))
                             duration)))
 
+(defn pan-offset
+  "Pan from result of one query to that of another"
+  [src-offset tgt-offset & [options]]
+  (let [{:keys [duration]
+         :or   {duration 0.75}} options]
+    (.dragFromToForDuration (utils/target)
+                            (utils/clj->js src-offset)
+                            (utils/clj->js tgt-offset)
+                            duration)))
+
 (declare calculate-swipe-to-offset calculate-pinch-offset)
 
 

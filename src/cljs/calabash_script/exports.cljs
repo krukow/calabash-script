@@ -20,6 +20,7 @@
 (def ^:export tapOffset (wrap-query-fn core/tap-offset))
 
 (def ^:export pan (wrap-query-fn core/pan))
+(def ^:export panOffset (wrap-query-fn core/pan-offset))
 
 
 (def ^:export swipe (wrap-query-fn core/swipe))
