@@ -200,11 +200,11 @@
 
           :up
           {:x (+ x (get-in swipe-delta [:vertical :dx]))
-           :y (+ y (get-in swipe-delta [:vertical :dy]))}
+           :y (- y (get-in swipe-delta [:vertical :dy]))}
 
           :down
           {:x (+ x (get-in swipe-delta [:vertical :dx]))
-           :y (- y (get-in swipe-delta [:vertical :dy]))})]
+           :y (+ y (get-in swipe-delta [:vertical :dy]))})]
 ;;    (log/log base-movement)
 ;;    (log/log options)
     (merge-with + base-movement
