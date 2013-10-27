@@ -5,7 +5,8 @@
   (:require [calabash-script.log :as log]
             [calabash-script.uia :as uia]
             [calabash-script.convert :as c]
-            [calabash-script.utils :as utils])
+            [calabash-script.utils :as utils]
+            [calabash-script.gestures :as g])
   (:require-macros [calabash-script.macros.uia :as m]))
 
 
@@ -144,7 +145,7 @@
                             (utils/clj->js tgt-offset)
                             duration)))
 
-(declare calculate-swipe-to-offset calculate-pinch-offset)
+
 
 
 (defn default-offset
@@ -158,7 +159,7 @@
   [offset & [options]]
   (let [offset (or offset (default-offset))
         from-offset offset
-        to-offset (calculate-swipe-to-offset offset options)
+        to-offset (g/calculate-swipe-to-offset offset options)
         duration (or (:duration options) 0.5)]
     (.dragFromToForDuration (utils/target)
                             (utils/clj->js from-offset)
@@ -171,7 +172,7 @@
   [in-or-out offset & [options]]
   (let [offset (or offset (default-offset))
         from-offset offset
-        to-offset (calculate-pinch-offset in-or-out offset options)
+        to-offset (g/calculate-pinch-offset in-or-out offset options)
         duration (or (:duration options) 0.5)
         js-from-offset (utils/clj->js from-offset)
         js-to-offset (utils/clj->js to-offset)]
@@ -182,42 +183,6 @@
       :out
       (.pinchCloseFromToForDuration (utils/target) js-from-offset js-to-offset duration))))
 
-
-(def swipe-delta  {:horizontal {:dx 75 :dy -1}
-                   :vertical   {:dx -1 :dy 75}})
-
-(defn calculate-swipe-to-offset
-  [{:keys [x y]} options]
-  (let [base-movement
-        (case (:direction options)
-          :left
-          {:x (- x (get-in swipe-delta [:horizontal :dx]))
-           :y (+ y (get-in swipe-delta [:horizontal :dy]))}
-
-          :right
-          {:x (+ x (get-in swipe-delta [:horizontal :dx]))
-           :y (+ y (get-in swipe-delta [:horizontal :dy]))}
-
-          :up
-          {:x (+ x (get-in swipe-delta [:vertical :dx]))
-           :y (- y (get-in swipe-delta [:vertical :dy]))}
-
-          :down
-          {:x (+ x (get-in swipe-delta [:vertical :dx]))
-           :y (+ y (get-in swipe-delta [:vertical :dy]))})]
-;;    (log/log base-movement)
-;;    (log/log options)
-    (merge-with + base-movement
-                  {:x (get options :dx 0)
-                   :y (get options :dy 0)})))
-
-
-(def pinch-delta  {:in  {:x 25 :y -25}
-                   :out {:x -25 :y 25}})
-
-(defn calculate-pinch-offset
-  [in-or-out offset options]
-  (merge-with + offset (get pinch-delta  in-or-out)))
 
 
 (defn scroll-to
@@ -279,7 +244,9 @@
 
 ;; Helpers
 
-(defn deactivate [duration] (.deactivateAppForDuration (utils/target) duration))
+(defn deactivate
+  [duration]
+  (.deactivateAppForDuration (utils/target) duration))
 
 (defn tap-mark
   [mark]
