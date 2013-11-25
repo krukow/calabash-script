@@ -117,6 +117,10 @@
   [& args]
   (apply perform-on-first #(.doubleTap %) args))
 
+(defn double-tap-offset
+  [offset]
+  (.doubleTap (utils/target) (utils/clj->js offset)))
+
 (defn two-finger-tap
   [& args]
   (apply perform-on-first #(.twoFingerTap %) args))
@@ -194,6 +198,10 @@
   [duration & args]
   (apply perform-on-first #(.touchAndHold % duration) args))
 
+
+(defn touch-hold-offset
+  [offset duration]
+  (.touchAndHold (utils/target) (utils/clj->js offset) duration))
 
 
 ;;; Alerts ;;;

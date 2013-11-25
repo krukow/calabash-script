@@ -5,19 +5,29 @@
             [calabash-script.utils :as utils]))
 
 
-
 (defn wrap-query-fn [qfn]
   (fn [& args]
     (utils/clj->js
-      (apply qfn (map reader/read-string args)))))
+     (apply qfn (map reader/read-string args)))))
+
+
+(defn ^:export query-el
+  [& args]
+  (first (apply core/query-el args)))
 
 (def ^:export query (wrap-query-fn core/query))
+
 (def ^:export names (wrap-query-fn core/names))
 
 (def ^:export tap (wrap-query-fn core/tap))
 (defn ^:export tapMark [mark] (utils/clj->js (core/tap-mark mark)))
-
 (def ^:export tapOffset (wrap-query-fn core/tap-offset))
+
+(def ^:export  doubleTap            (wrap-query-fn core/double-tap))
+(def ^:export  doubleTapOffset      (wrap-query-fn core/double-tap-offset))
+
+(def ^:export  touchHold            (wrap-query-fn core/touch-hold))
+(def ^:export  touchHoldOffset      (wrap-query-fn core/touch-hold-offset))
 
 (def ^:export pan (wrap-query-fn core/pan))
 (def ^:export panOffset (wrap-query-fn core/pan-offset))
