@@ -13,6 +13,10 @@
   []
   (.mainWindow (app)))
 
+(defn windows
+  []
+  (seq (.toArray (.windows (app)))))
+
 (defn keyboard
   []
   (.keyboard (app)))

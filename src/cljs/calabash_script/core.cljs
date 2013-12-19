@@ -70,7 +70,6 @@
       (sleep post-timeout))
     result))
 
-
 ;;;;;;; Query ;;;;;;;;
 (defn query
   "Perform a query using the calabash-script query language.
@@ -90,10 +89,36 @@
   "Log the result of a query."
   (log/log (apply query args)))
 
+(defn log-tree-query [& args]
+  "Logs the tree of the result of a query."
+    (when-let [res (seq (apply query-el args))]
+      (log/logTree (first res))))
 
+(defn log-tree-mark [mark]
+  "Logs the tree of the result of a query for mark."
+    (when-let [res (seq (query-el [:view {:marked mark}]))]
+      (log/logTree (first res))))
 
 
 ;;;; Helpers ;;;;
+
+(defn wait-for-elements-ready
+  [{message :message
+    :as wait-opts
+    :or {message (str "Timed out waiting for " args)}} & args]
+  (wait-for
+   (merge wait-opts {:message message})
+    #(when-let [els (seq (apply query-el args))]
+       (every? (fn [el] (and (.isVisible el) (.isValid el))) els))))
+
+(defn wait-for-mark-ready
+  [{message :message
+    :as wait-opts
+    :or {message (str "Timed out waiting for " mark)}}
+   mark]
+  (wait-for-elements-ready (merge wait-opts {:message message})
+                           [:view {:marked mark}]))
+
 
 (defn perform-on
   [action & args]
@@ -125,6 +150,14 @@
   [& args]
   (apply perform-on-first #(.twoFingerTap %) args))
 
+(defn two-finger-tap-offset
+  [offset]
+  (.twoFingerTap (utils/target) (utils/clj->js offset)))
+
+(defn flick-offset
+  [from to]
+  (.flickFromTo (utils/target) (utils/clj->js from) (utils/clj->js to)))
+
 (defn pan
   "Pan from result of one query to that of another"
   [src-query tgt-query & kwargs]
@@ -148,7 +181,6 @@
                             (utils/clj->js src-offset)
                             (utils/clj->js tgt-offset)
                             duration)))
-
 
 
 
@@ -200,7 +232,7 @@
 
 
 (defn touch-hold-offset
-  [offset duration]
+  [duration offset]
   (.touchAndHold (utils/target) (utils/clj->js offset) duration))
 
 

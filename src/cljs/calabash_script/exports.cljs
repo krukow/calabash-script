@@ -11,11 +11,15 @@
      (apply qfn (map reader/read-string args)))))
 
 
-(defn ^:export query-el
+(defn ^:export queryEl
   [& args]
-  (first (apply core/query-el args)))
+  (first (apply core/query-el (map reader/read-string args))))
 
 (def ^:export query (wrap-query-fn core/query))
+(defn ^:export queryWindows
+  [q]
+  (utils/clj->js
+   (core/query (reader/read-string q) (utils/windows))))
 
 (def ^:export names (wrap-query-fn core/names))
 
@@ -25,6 +29,11 @@
 
 (def ^:export  doubleTap            (wrap-query-fn core/double-tap))
 (def ^:export  doubleTapOffset      (wrap-query-fn core/double-tap-offset))
+
+(def ^:export  twoFingerTap            (wrap-query-fn core/two-finger-tap))
+(def ^:export  twoFingerTapOffset      (wrap-query-fn core/two-finger-tap-offset))
+
+(def ^:export  flickOffset             (wrap-query-fn core/flick-offset))
 
 (def ^:export  touchHold            (wrap-query-fn core/touch-hold))
 (def ^:export  touchHoldOffset      (wrap-query-fn core/touch-hold-offset))
@@ -56,3 +65,12 @@
 
 (defn ^:export setLocation [location] (core/set-location (reader/read-string location)))
 (def ^:export deactivate (wrap-query-fn core/deactivate))
+
+
+(def  ^:export logQuery (wrap-query-fn core/log-query))
+(def  ^:export logTreeQuery (wrap-query-fn core/log-tree-query))
+(defn ^:export logTreeMark [mark] (core/log-tree-mark mark))
+
+(def  ^:export waitForElementsReady (wrap-query-fn core/wait-for-elements-ready))
+(defn ^:export waitForMarkReady [wait-opts mark]
+  (core/wait-for-mark-ready (reader/read-string wait-opts) mark))
