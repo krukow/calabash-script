@@ -50,7 +50,7 @@
          retry-frequency 0.2
          post-timeout 0
          message "Timed out waiting..."
-         screenshot true}}
+         screenshot false}}
    pred]
 
   (let [start (js/Date.)
@@ -268,11 +268,33 @@
   []
   (valid? (utils/keyboard)))
 
+(defn element-with-keyboard-focus
+  []
+  (first (filter #(= 1 (.hasKeyboardFocus %))
+                 (query-el [:textField] (utils/windows)))))
+
 (defn keyboard-enter-text
   "Enters a string of characters using the iOS keyboard. Fails if no keyboard is visible. iOS5+ only for now (need implementation that doesn't use typeString)."
-  [txt]
+  [txt & args]
   (fail-if-not (keyboard-visible?) "Keyboard not visible")
-  (.typeString (utils/keyboard) txt))
+  (if-let [tf (element-with-keyboard-focus)]
+    (let [reset-to (or (first args) "")
+          kb (utils/keyboard)]
+      (wait-for {:retry-frequency 0.5
+                 :timeout 20
+                 :message (str "Unable to type: " txt)}
+                (fn []
+                  (try
+                    (.typeString kb txt)
+                    true
+                    (catch js/Error err
+                      (do
+                        (log/log "fail" err)
+                        (log/log "restoring: " reset-to)
+                        (.setValue tf reset-to)
+                        false)))))
+      (c/uia->map tf))
+    (.typeString (utils/keyboard) txt)))
 
 (defn enter
   "Taps the enter button on keyboard (which must be visible). Note: iOS4.x?"

@@ -15,6 +15,11 @@
   [& args]
   (first (apply core/query-el (map reader/read-string args))))
 
+(defn ^:export elementWithKeyboardFocus
+  []
+  (core/element-with-keyboard-focus))
+
+
 (def ^:export query (wrap-query-fn core/query))
 (defn ^:export queryWindows
   [q]
@@ -60,7 +65,7 @@
 
 (defn ^:export screenshot [name] (utils/screenshot name))
 
-(defn ^:export typeString [string] (core/keyboard-enter-text string))
+(defn ^:export typeString [& args] (utils/clj->js (apply core/keyboard-enter-text args)))
 (defn ^:export enter [] (core/enter))
 
 (defn ^:export setLocation [location] (core/set-location (reader/read-string location)))
