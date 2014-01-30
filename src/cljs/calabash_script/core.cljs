@@ -278,10 +278,11 @@
   [txt & args]
   (fail-if-not (keyboard-visible?) "Keyboard not visible")
   (if-let [tf (element-with-keyboard-focus)]
-    (let [reset-to (or (first args) "")
+    (let [tf-serialized (c/uia->map tf)
+          reset-to (or (first args) "")
           kb (utils/keyboard)]
       (wait-for {:retry-frequency 0.5
-                 :timeout 20
+                 :timeout 60
                  :message (str "Unable to type: " txt)}
                 (fn []
                   (try
@@ -293,7 +294,7 @@
                         (log/log "restoring: " reset-to)
                         (.setValue tf reset-to)
                         false)))))
-      (c/uia->map tf))
+      tf-serialized)
     (.typeString (utils/keyboard) txt)))
 
 (defn enter
