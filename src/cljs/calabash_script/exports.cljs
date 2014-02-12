@@ -15,12 +15,16 @@
   [& args]
   (first (apply core/query-el (map reader/read-string args))))
 
+(defn ^:export queryElWindows
+  [q]
+  (first (core/query-el (reader/read-string q) (utils/windows))))
+
 (defn ^:export elementWithKeyboardFocus
   []
   (core/element-with-keyboard-focus))
 
-
 (def ^:export query (wrap-query-fn core/query))
+
 (defn ^:export queryWindows
   [q]
   (utils/clj->js

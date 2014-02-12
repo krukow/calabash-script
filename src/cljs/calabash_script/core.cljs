@@ -317,7 +317,17 @@
 
 (defn tap-offset
   [offset]
-  (.tapWithOptions (utils/target) (utils/clj->js offset)))
+  (wait-for {:retry-frequency 0.5
+             :timeout 60
+             :message ("Unable to tap-offset: " offset)}
+            (fn []
+              (try
+                (.tapWithOptions (utils/target) (utils/clj->js offset))
+                true
+                (catch js/Error err
+                  (do
+                    (log/log "tap-offset failed" err)
+                    false))))))
 
 (defn element-exists?
   [& args]
