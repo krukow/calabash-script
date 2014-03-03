@@ -271,17 +271,19 @@
 (defn element-with-keyboard-focus
   []
   (first (filter #(= 1 (.hasKeyboardFocus %))
-                 (query-el [:textField] (utils/windows)))))
+                 (concat
+                  (query-el [:textField] (utils/windows))
+                  (query-el [:textView] (utils/windows))))))
 
 (defn keyboard-enter-text
-  "Enters a string of characters using the iOS keyboard. Fails if no keyboard is visible. iOS5+ only for now (need implementation that doesn't use typeString)."
+  "Enters a string of characters using the iOS keyboard. Fails if no keyboard is visible. iOS5+ only."
   [txt & args]
   (fail-if-not (keyboard-visible?) "Keyboard not visible")
   (if-let [tf (element-with-keyboard-focus)]
     (let [tf-serialized (c/uia->map tf)
           reset-to (or (first args) "")
           kb (utils/keyboard)]
-      (wait-for {:retry-frequency 0.5
+      (wait-for {:retry-frequency 1
                  :timeout 60
                  :message (str "Unable to type: " txt)}
                 (fn []
