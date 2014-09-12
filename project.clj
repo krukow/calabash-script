@@ -3,21 +3,35 @@
   :url "http://example.com/FIXME"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
-  :dependencies [[org.clojure/clojure "1.4.0"]
-                 [org.clojure/clojurescript "0.0-1535"]]
+  :dependencies [[org.clojure/clojure "1.6.0"]
+                 [org.clojure/clojurescript "0.0-2280"]]
 
   :hooks [leiningen.cljsbuild]
 
-  :plugins [[lein-cljsbuild "0.2.9"]]
+  :plugins [[lein-cljsbuild "1.0.3"]]
   :source-paths ["src/clj"]
-  :cljsbuild {:builds
-              [{:source-path "src/cljs"
-                :jar true
-                :compiler {:output-to "build/calabash_script.js"
-                           :optimizations :whitespace
-                           :pretty-print true}}
-               {:source-path "base"
-                :jar true
-                :compiler {:output-to "build/base.js"
-                           :optimizations :simple
-                           :pretty-print true}}]})
+  :cljsbuild
+  {:builds {:dev
+            {:source-paths ["src/cljs"]
+             :jar true
+             :compiler
+             {:optimizations :whitespace
+              :output-to "build/calabash_script.js"
+              :pretty-print true}}
+            :calabash
+            {:source-paths ["src/cljs"]
+             :jar true
+             :compiler
+             {:optimizations :simple
+              :output-to "build/calabash_script-simple.js"
+              :output-dir "build"
+              :externs ["externs/uiautomation.js"]
+              :source-map "build/calabash_script-simple.js.map"
+              }}
+            :base
+            {:source-paths ["base"],
+             :jar true,
+             :compiler
+             {:optimizations :simple,
+              :output-to "build/base.js",
+              :pretty-print true}}}})
