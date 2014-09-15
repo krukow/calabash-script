@@ -318,13 +318,15 @@
   (tap [:view {:marked mark}]))
 
 (defn tap-offset
-  [offset]
+  [offset & [options]]
   (wait-for {:retry-frequency 0.5
              :timeout 60
              :message ("Unable to tap-offset: " offset)}
             (fn []
               (try
-                (.tapWithOptions (utils/target) (utils/clj->js offset))
+                (.tapWithOptions (utils/target)
+                                 (utils/clj->js offset)
+                                 (or (:duration options) 0.1))
                 true
                 (catch js/Error err
                   (do
