@@ -144,7 +144,7 @@
 
 (defn double-tap-offset
   [offset]
-  (.doubleTap (utils/target) (utils/clj->js offset)))
+  (.doubleTap (utils/target) (clj->js offset)))
 
 (defn two-finger-tap
   [& args]
@@ -152,11 +152,11 @@
 
 (defn two-finger-tap-offset
   [offset]
-  (.twoFingerTap (utils/target) (utils/clj->js offset)))
+  (.twoFingerTap (utils/target) (clj->js offset)))
 
 (defn flick-offset
   [from to]
-  (.flickFromTo (utils/target) (utils/clj->js from) (utils/clj->js to)))
+  (.flickFromTo (utils/target) (clj->js from) (clj->js to)))
 
 (defn pan
   "Pan from result of one query to that of another"
@@ -168,8 +168,8 @@
     (fail-if-not (and src tgt)
                  (apply str "Unable to find results for both of " src-query tgt-query))
     (.dragFromToForDuration (utils/target)
-                            (utils/clj->js (:hit-point src))
-                            (utils/clj->js (:hit-point tgt))
+                            (clj->js (:hit-point src))
+                            (clj->js (:hit-point tgt))
                             duration)))
 
 (defn pan-offset
@@ -178,8 +178,8 @@
   (let [{:keys [duration]
          :or   {duration 0.75}} options]
     (.dragFromToForDuration (utils/target)
-                            (utils/clj->js src-offset)
-                            (utils/clj->js tgt-offset)
+                            (clj->js src-offset)
+                            (clj->js tgt-offset)
                             duration)))
 
 
@@ -198,8 +198,8 @@
         to-offset (g/calculate-swipe-to-offset offset options)
         duration (or (:duration options) 0.5)]
     (.dragFromToForDuration (utils/target)
-                            (utils/clj->js from-offset)
-                            (utils/clj->js to-offset)
+                            (clj->js from-offset)
+                            (clj->js to-offset)
                             duration)))
 
 (defn pinch [in-or-out q & [options]] (throw (js/Error.)))
@@ -210,8 +210,8 @@
         from-offset offset
         to-offset (g/calculate-pinch-offset in-or-out offset options)
         duration (or (:duration options) 0.5)
-        js-from-offset (utils/clj->js from-offset)
-        js-to-offset (utils/clj->js to-offset)]
+        js-from-offset (clj->js from-offset)
+        js-to-offset (clj->js to-offset)]
     (case in-or-out
       :in
       (.pinchOpenFromToForDuration (utils/target) js-from-offset js-to-offset duration)
@@ -233,7 +233,7 @@
 
 (defn touch-hold-offset
   [duration offset]
-  (.touchAndHold (utils/target) (utils/clj->js offset) duration))
+  (.touchAndHold (utils/target) (clj->js offset) duration))
 
 
 ;;; Alerts ;;;
@@ -311,7 +311,12 @@
 
 (defn deactivate
   [duration]
-  (.deactivateAppForDuration (utils/target) duration))
+  (let [max-retry 5]
+    (loop [i 0]
+      (let [val (.deactivateAppForDuration (utils/target) duration)]
+        (if (or val (>= i max-retry))
+          val
+          (recur (inc i)))))))
 
 (defn tap-mark
   [mark]
@@ -321,12 +326,12 @@
   [offset & [options]]
   (wait-for {:retry-frequency 0.5
              :timeout 60
-             :message ("Unable to tap-offset: " offset)}
+             :message (str "Unable to tap-offset: " offset)}
             (fn []
               (try
                 (.tapWithOptions (utils/target)
-                                 (utils/clj->js offset)
-                                 (or (:duration options) 0.1))
+                                 (clj->js offset)
+                                 (clj->js {:duration (or (:duration options) 0.1)}))
                 true
                 (catch js/Error err
                   (do
@@ -357,7 +362,7 @@
   (map :name (apply query args)))
 
 (defn set-location [location]
-  (.setLocation (utils/target) (utils/clj->js location)))
+  (.setLocation (utils/target) (clj->js location)))
 
 
 (comment

@@ -7,7 +7,7 @@
 
 (defn wrap-query-fn [qfn]
   (fn [& args]
-    (utils/clj->js
+    (clj->js
      (apply qfn (map reader/read-string args)))))
 
 
@@ -27,13 +27,13 @@
 
 (defn ^:export queryWindows
   [q]
-  (utils/clj->js
+  (clj->js
    (core/query (reader/read-string q) (utils/windows))))
 
 (def ^:export names (wrap-query-fn core/names))
 
 (def ^:export tap (wrap-query-fn core/tap))
-(defn ^:export tapMark [mark] (utils/clj->js (core/tap-mark mark)))
+(defn ^:export tapMark [mark] (clj->js (core/tap-mark mark)))
 (def ^:export tapOffset (wrap-query-fn core/tap-offset))
 
 (def ^:export  doubleTap            (wrap-query-fn core/double-tap))
@@ -69,7 +69,7 @@
 
 (defn ^:export screenshot [name] (utils/screenshot name))
 
-(defn ^:export typeString [& args] (utils/clj->js (apply core/keyboard-enter-text args)))
+(defn ^:export typeString [& args] (clj->js (apply core/keyboard-enter-text args)))
 (defn ^:export enter [] (core/enter))
 
 (defn ^:export setLocation [location] (core/set-location (reader/read-string location)))

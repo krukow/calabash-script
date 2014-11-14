@@ -18,16 +18,6 @@
              {:optimizations :whitespace
               :output-to "build/calabash_script.js"
               :pretty-print true}}
-            :calabash
-            {:source-paths ["src/cljs"]
-             :jar true
-             :compiler
-             {:optimizations :simple
-              :output-to "build/calabash_script-simple.js"
-              :output-dir "build"
-              :externs ["externs/uiautomation.js"]
-              :source-map "build/calabash_script-simple.js.map"
-              }}
             :base
             {:source-paths ["base"],
              :jar true,
