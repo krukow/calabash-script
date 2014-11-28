@@ -6,8 +6,6 @@
   [reason & kwargs]
   (let [{:keys [screenshot]
          :or   {screenshot "screenshot"}} (apply hash-map kwargs)]
-    (when screenshot
-      (utils/screenshot screenshot))
     (throw (new js/Error reason))))
 
 (defn fail-if [condition & kwargs]

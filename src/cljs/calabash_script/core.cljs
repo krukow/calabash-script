@@ -282,6 +282,7 @@
   (if-let [tf (element-with-keyboard-focus)]
     (let [tf-serialized (c/uia->map tf)
           reset-to (or (first args) "")
+          locate-key-error-reg #"failed to locate key"
           kb (utils/keyboard)]
       (wait-for {:retry-frequency 1
                  :timeout 60
@@ -292,8 +293,11 @@
                     true
                     (catch js/Error err
                       (do
-                        (log/log "fail" err)
-                        (log/log "restoring: " reset-to)
+                        (let [err-str (str err)]
+                          (log/log ".typeString failed with error: '" err-str "'")
+                          (when (re-find locate-key-error-reg err-str)
+                            (throw err)))
+                        (log/log  "Restoring to text: '" reset-to "'")
                         (.setValue tf reset-to)
                         false)))))
       tf-serialized)
