@@ -105,6 +105,10 @@
   (-query [kw coll dir]
     (filter-by-type kw (dir-seq dir coll)))
 
+  Symbol
+  (-query [s coll dir]
+    (-query (keyword s) coll dir))
+
   js/String
   (-query [kw coll dir]
     (filter-by-type (keyword kw) (dir-seq dir coll)))
