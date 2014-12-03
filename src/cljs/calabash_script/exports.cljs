@@ -52,6 +52,7 @@
 
 
 (def ^:export swipe (wrap-query-fn core/swipe))
+(def ^:export swipeMark (wrap-query-fn core/swipe-mark))
 (def ^:export swipeOffset (wrap-query-fn core/swipe-offset))
 
 (def ^:export pinch (wrap-query-fn core/pinch))

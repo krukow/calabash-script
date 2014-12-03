@@ -189,7 +189,24 @@
   (let [hp  (.hitpoint (utils/window))]
     {:x (.-x hp) :y (.-y hp)}))
 
-(defn swipe [x]  (throw (js/Error.)))
+(defn swipe
+  [dir query-spec & [options]]
+  (let [{:keys [startOffset endOffset duration]
+         :or {startOffset {:x 0.5, :y 0.5}
+              duration 0.5}
+         :as defaults} options
+         end-offset (or endOffset (g/drag-inside-offset (keyword dir) startOffset))
+         duration (or duration 0.5)]
+    (perform-on-first
+     #(.dragInsideWithOptions % (clj->js (assoc defaults
+                                           :startOffset startOffset
+                                           :duration duration
+                                           :endOffset end-offset)))
+      query-spec)))
+
+(defn swipe-mark
+  [dir mark & args]
+  (apply swipe dir [:view {:marked mark}] args))
 
 (defn swipe-offset
   [offset & [options]]
