@@ -144,7 +144,7 @@
 
 (defn double-tap-offset
   [offset]
-  (.doubleTap (utils/target) (clj->js offset)))
+  (.doubleTap (utils/target) (utils/uia-point offset)))
 
 (defn two-finger-tap
   [& args]
@@ -152,11 +152,11 @@
 
 (defn two-finger-tap-offset
   [offset]
-  (.twoFingerTap (utils/target) (clj->js offset)))
+  (.twoFingerTap (utils/target) (utils/uia-point offset)))
 
 (defn flick-offset
   [from to]
-  (.flickFromTo (utils/target) (clj->js from) (clj->js to)))
+  (.flickFromTo (utils/target) (utils/uia-point from) (utils/uia-point to)))
 
 (defn pan
   "Pan from result of one query to that of another"
@@ -168,8 +168,8 @@
     (fail-if-not (and src tgt)
                  (apply str "Unable to find results for both of " src-query tgt-query))
     (.dragFromToForDuration (utils/target)
-                            (clj->js (:hit-point src))
-                            (clj->js (:hit-point tgt))
+                            (clj->js (:hit-point src)) ;already UIA Point
+                            (clj->js (:hit-point tgt)) ;already UIA Point
                             duration)))
 
 (defn pan-offset
@@ -178,8 +178,8 @@
   (let [{:keys [duration]
          :or   {duration 0.75}} options]
     (.dragFromToForDuration (utils/target)
-                            (clj->js src-offset)
-                            (clj->js tgt-offset)
+                            (utils/uia-point src-offset)
+                            (utils/uia-point tgt-offset)
                             duration)))
 
 
@@ -199,9 +199,12 @@
          duration (or duration 0.5)]
     (perform-on-first
      #(.dragInsideWithOptions % (clj->js (assoc defaults
-                                           :startOffset startOffset
-                                           :duration duration
-                                           :endOffset end-offset)))
+                                           :startOffset
+                                           (utils/rounded-map startOffset)
+                                           :duration
+                                           duration
+                                           :endOffset
+                                           (utils/rounded-map end-offset))))
       query-spec)))
 
 (defn swipe-mark
@@ -215,8 +218,8 @@
         to-offset (g/calculate-swipe-to-offset offset options)
         duration (or (:duration options) 0.5)]
     (.dragFromToForDuration (utils/target)
-                            (clj->js from-offset)
-                            (clj->js to-offset)
+                            (utils/uia-point from-offset)
+                            (utils/uia-point to-offset)
                             duration)))
 
 (defn pinch [in-or-out q & [options]] (throw (js/Error.)))
@@ -227,8 +230,8 @@
         from-offset offset
         to-offset (g/calculate-pinch-offset in-or-out offset options)
         duration (or (:duration options) 0.5)
-        js-from-offset (clj->js from-offset)
-        js-to-offset (clj->js to-offset)]
+        js-from-offset (utils/uia-point from-offset)
+        js-to-offset (utils/uia-point to-offset)]
     (case in-or-out
       :in
       (.pinchOpenFromToForDuration (utils/target) js-from-offset js-to-offset duration)
@@ -250,7 +253,7 @@
 
 (defn touch-hold-offset
   [duration offset]
-  (.touchAndHold (utils/target) (clj->js offset) duration))
+  (.touchAndHold (utils/target) (utils/uia-point offset) duration))
 
 
 ;;; Alerts ;;;
@@ -349,12 +352,12 @@
 (defn tap-offset
   [offset & [options]]
   (wait-for {:retry-frequency 0.5
-             :timeout 60
+             :timeout 20
              :message (str "Unable to tap-offset: " offset)}
             (fn []
               (try
                 (.tapWithOptions (utils/target)
-                                 (clj->js offset)
+                                 (utils/uia-point offset)
                                  (clj->js {:duration (or (:duration options) 0.1)}))
                 true
                 (catch js/Error err

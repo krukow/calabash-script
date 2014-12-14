@@ -21,6 +21,17 @@
   []
   (.keyboard (app)))
 
+(defn rounded-map
+  [cljmap & keys]
+  (let [round-key (fn [cljmap key]
+                    (if-let [kv (get cljmap key)]
+                      (assoc cljmap key (.round js/Math kv))
+                      cljmap))]
+    (reduce round-key cljmap (cons :x (cons :y keys)))))
+
+(defn uia-point
+  [cljmap & keys]
+  (clj->js (apply rounded-map cljmap keys)))
 
 (def ^:dynamic *screenshot-count* (atom 1))
 
