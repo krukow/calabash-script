@@ -256,6 +256,53 @@
   (.touchAndHold (utils/target) (utils/uia-point offset) duration))
 
 
+(def orientations
+  {js/UIA_DEVICE_ORIENTATION_UNKNOWN :unknown
+   js/UIA_DEVICE_ORIENTATION_PORTRAIT :portrait
+   js/UIA_DEVICE_ORIENTATION_PORTRAIT_UPSIDEDOWN :portrait-upside-down
+   js/UIA_DEVICE_ORIENTATION_LANDSCAPELEFT :landscape-left
+   js/UIA_DEVICE_ORIENTATION_LANDSCAPERIGHT :landscape-right
+   js/UIA_DEVICE_ORIENTATION_FACEUP :faceup
+   js/UIA_DEVICE_ORIENTATION_FACEDOWN :facedown})
+
+(def rotatable-orientations
+  [js/UIA_DEVICE_ORIENTATION_PORTRAIT
+   js/UIA_DEVICE_ORIENTATION_LANDSCAPERIGHT ;portrait rotated clockwise
+   js/UIA_DEVICE_ORIENTATION_PORTRAIT_UPSIDEDOWN ;landscaperight rotated clockwise
+   js/UIA_DEVICE_ORIENTATION_LANDSCAPELEFT]) ;...
+
+(def clockwise-orientations
+  (partition 2 1 (cycle rotatable-orientations)))
+
+;;((:portrait :landscape-right) ;; clockwise of :portrait is :landscape-right
+;; (:landscape-right :portrait-upside-down) ;; ..
+;; (:portrait-upside-down :landscape-left))
+
+
+(defn relative-orientation
+  [orientation dir]
+  (if (some #(= orientation %) rotatable-orientations)
+    (let [dir (case dir
+                :left  :counter-clockwise
+                :right :clockwise
+                dir)
+          orientations (if (= :clockwise dir)
+                         clockwise-orientations
+                         (map reverse clockwise-orientations))]
+      (second (first (filter #(= orientation (first %)) orientations))))
+    (throw (new js/Error (str "Can't rotate orientation: " orientation)))))
+
+(defn orientation
+  []
+  (get orientations (.deviceOrientation (utils/target))))
+
+(defn rotate
+  [dir]
+  (.setDeviceOrientation (utils/target)
+                         (relative-orientation
+                          (.deviceOrientation (utils/target))
+                          dir)))
+
 ;;; Alerts ;;;
 
 (def ^:dynamic *alert-handlers*

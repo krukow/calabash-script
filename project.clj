@@ -7,7 +7,7 @@
                  [org.clojure/clojurescript "0.0-2280"]]
 
   :hooks [leiningen.cljsbuild]
-
+  :profiles {:dev {:plugins [[com.cemerick/austin "0.1.5"]]}}
   :plugins [[lein-cljsbuild "1.0.3"]]
   :source-paths ["src/clj"]
   :cljsbuild

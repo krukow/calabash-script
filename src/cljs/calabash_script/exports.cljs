@@ -84,3 +84,9 @@
 (def  ^:export waitForElementsReady (wrap-query-fn core/wait-for-elements-ready))
 (defn ^:export waitForMarkReady [wait-opts mark]
   (core/wait-for-mark-ready (reader/read-string wait-opts) mark))
+
+(defn ^:export rotate [dir]
+  (core/rotate (keyword (reader/read-string dir))))
+
+(defn ^:export orientation []
+  (str (core/orientation)))
