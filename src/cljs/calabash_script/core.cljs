@@ -9,6 +9,7 @@
             [calabash-script.gestures :as g])
   (:require-macros [calabash-script.macros.uia :as m]))
 
+(declare find-first-picker)
 
 (.setTimeout (utils/target) 0)
 
@@ -255,6 +256,14 @@
   [duration offset]
   (.touchAndHold (utils/target) (utils/uia-point offset) duration))
 
+(defn select-picker-values
+  [values]
+  (log/log "Picker select values" values)
+  (if-let [picker (find-first-picker)]
+    (let [wheels (.toArray (.wheels picker))]
+      (doseq [[index value] values]
+        (.selectValue (nth wheels index) value)))
+    (throw (js/Error. "No visible picker"))))
 
 (def orientations
   {js/UIA_DEVICE_ORIENTATION_UNKNOWN :unknown
@@ -438,6 +447,10 @@
 (defn set-location [location]
   (.setLocation (utils/target) (clj->js location)))
 
+(defn find-first-picker
+  []
+  (let [windows (reverse (utils/windows))]
+    (first (mapcat #(query-el [:picker] (list %)) windows))))
 
 (comment
   (define-uia-test

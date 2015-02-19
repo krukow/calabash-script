@@ -63,6 +63,7 @@
 (def ^:export elementExists  (wrap-query-fn core/element-exists?))
 (def ^:export elementDoesNotExist (wrap-query-fn core/element-does-not-exist?))
 
+(defn ^:export selectPickerValues [values-map] (core/select-picker-values (reader/read-string values-map)))
 (defn ^:export app [] (utils/app))
 (defn ^:export window [] (utils/window))
 (defn ^:export keyboard [] (utils/keyboard))
