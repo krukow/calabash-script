@@ -9,13 +9,16 @@
   []
   (.frontMostApp (target)))
 
-(defn window
-  []
-  (.mainWindow (app)))
-
 (defn windows
   []
   (seq (.toArray (.windows (app)))))
+
+(defn window
+  []
+  (let [main (.mainWindow (app))]
+    (if (.hitpoint main)
+      main
+      (first (filter #(.hitpoint %) (windows))))))
 
 (defn keyboard
   []
